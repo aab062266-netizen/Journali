@@ -8,11 +8,34 @@
 import SwiftUI
 
 struct JournalCardView: View {
+    let journal: Journal
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(journal.title)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(Color("TextAccent"))
+                Spacer()
+                Image(systemName: journal.isBookmarked ? "bookmark.fill" : "bookmark")
+                    .foregroundStyle(Color("TextAccent"))
+            }
+            Text(journal.date.formatted(date: .numeric, time: .omitted))
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(Color("TextSecondary"))
+            Text(journal.content)
+                .font(.system(size: 16, weight: .regular))
+                .foregroundStyle(Color("TextPrimary"))
+        }
     }
+    
 }
 
 #Preview {
-    JournalCardView()
+    JournalCardView(journal:
+    Journal(title: "My Birthday",
+    content: "Lorem ipsum dolor sit amet", date: Date(), isBookmarked: true))
+        .preferredColorScheme(.dark)
 }
+
+
+
