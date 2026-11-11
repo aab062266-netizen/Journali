@@ -26,15 +26,24 @@ struct JournalCardView: View {
                 .font(.system(size: 16, weight: .regular))
                 .foregroundStyle(Color("TextPrimary"))
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color("CardSurface"))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
     
 }
 
 #Preview {
-    JournalCardView(journal:
-    Journal(title: "My Birthday",
-    content: "Lorem ipsum dolor sit amet", date: Date(), isBookmarked: true))
-        .preferredColorScheme(.dark)
+    JournalCardView(
+        journal: Journal(
+          title: "My Birthday",
+          content: "Lorem ipsum dolor sit amet",
+          date: Date(),
+          isBookmarked: true
+           )
+    )
+    .preferredColorScheme(.dark)
 }
 
 
