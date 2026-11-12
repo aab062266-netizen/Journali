@@ -13,17 +13,17 @@ struct JournalCardView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(journal.title)
-                    .font(.system(size: 24, weight: .semibold))
+                    .font(.titleCard)
                     .foregroundStyle(Color("TextAccent"))
                 Spacer()
                 Image(systemName: journal.isBookmarked ? "bookmark.fill" : "bookmark")
                     .foregroundStyle(Color("TextAccent"))
             }
             Text(journal.date.formatted(date: .numeric, time: .omitted))
-                .font(.system(size: 14, weight: .regular))
+                .font(.captionS)
                 .foregroundStyle(Color("TextSecondary"))
             Text(journal.content)
-                .font(.system(size: 16, weight: .regular))
+                .font(.bodyM)
                 .foregroundStyle(Color("TextPrimary"))
         }
         .padding(16)
