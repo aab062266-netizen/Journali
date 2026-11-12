@@ -29,6 +29,15 @@ struct JournalListView: View {
                             .multilineTextAlignment(.center)
                     }
                     .padding(.horizontal, 32)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(viewModel.journals) { journal in
+                                JournalCardView(journal: journal)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
                 }
             }
             .navigationTitle("Journal")
