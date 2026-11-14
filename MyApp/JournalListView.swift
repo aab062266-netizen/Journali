@@ -9,7 +9,7 @@ import SwiftUI
 
 struct JournalListView: View {
     @StateObject private var viewModel = JournalViewModel()
-    
+    @State private var showAddJournal = false
     var body: some View {
         NavigationStack {
             ZStack {
@@ -50,12 +50,15 @@ struct JournalListView: View {
                             Image(systemName: "line.3.horizontal.decrease")
                         }
                         Button {
-                            // إضافة يومية، نضيفها لاحقًا
+                showAddJournal = true
                         } label: {
                             Image(systemName: "plus")
                         }
                     }
                 }
+            }
+            .sheet(isPresented: $showAddJournal) {
+                AddJournalView(viewModel: viewModel)
             }
         }
         .preferredColorScheme(.dark)
