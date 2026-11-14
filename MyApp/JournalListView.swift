@@ -33,7 +33,9 @@ struct JournalListView: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(viewModel.journals) { journal in
-                                JournalCardView(journal: journal)
+                                JournalCardView(journal: journal) {
+                                    viewModel.toggleBookmark(journal)
+                                }
                             }
                         }
                         .padding(.horizontal, 16)

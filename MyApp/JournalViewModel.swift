@@ -15,5 +15,11 @@ class JournalViewModel: ObservableObject {
         let journal = Journal(title: title, content: content, date: Date(), isBookmarked: false)
         journals.append(journal)
     }
+    
+    func toggleBookmark(_ journal: Journal) {
+        if let index = journals.firstIndex(where: { $0.id == journal.id }) {
+            journals[index].isBookmarked.toggle()
+        }
+    }
 }
 
