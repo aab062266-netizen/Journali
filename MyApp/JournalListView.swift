@@ -10,6 +10,8 @@ import SwiftUI
 struct JournalListView: View {
     @StateObject private var viewModel = JournalViewModel()
     @State private var showAddJournal = false
+    @State private var journalToDelete: Journal?
+    @State private var showDeleteAlert = false
     var body: some View {
         NavigationStack {
             ZStack {
@@ -30,16 +32,27 @@ struct JournalListView: View {
                     }
                     .padding(.horizontal, 32)
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(viewModel.journals) { journal in
-                                JournalCardView(journal: journal) {
-                                    viewModel.toggleBookmark(journal)
+                    List {
+                        ForEach(viewModel.journals) { journal in
+                            JournalCardView(journal: journal) {
+                                viewModel.toggleBookmark(journal)
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                journalToDelete = journal
+                                showDeleteAlert = true
+                                } label: {
+                                    Image(systemName: "trash.fill")
                                 }
+                                .tint(Color("Destructive"))
                             }
                         }
-                        .padding(.horizontal, 16)
+                        
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
             .navigationTitle("Journal")
@@ -61,6 +74,16 @@ struct JournalListView: View {
             }
             .sheet(isPresented: $showAddJournal) {
                 AddJournalView(viewModel: viewModel)
+            }
+            .alert("Delete Journal?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    if let journalToDelete {
+                        viewModel.deleteJournal(journalToDelete)
+                    }
+                }
+            } message: {
+                Text("Are you sure you want to delete this journal?")
             }
         }
         .preferredColorScheme(.dark)
