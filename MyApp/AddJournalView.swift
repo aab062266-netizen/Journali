@@ -12,12 +12,22 @@ struct AddJournalView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var content = ""
+    @State private var showDiscardAlert = false
+    private enum Field {
+        case title, content
+    }
+    @FocusState private var focusedField: Field?
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("CardSurface").ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 8) {
                     TextField("Title", text: $title)
+                        .focused($focusedField, equals: .title)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .content
+                        }
                         .font(.headingM)
                         .foregroundStyle(Color("TextPrimary"))
                     Text(Date().formatted(date: .numeric, time: .omitted))
@@ -28,6 +38,7 @@ struct AddJournalView: View {
                             .font(.bodyM)
                             .foregroundStyle(Color("TextPrimary"))
                             .scrollContentBackground(.hidden)
+                            .focused($focusedField, equals: .content)
                         if content.isEmpty {
                             Text("Type your Journal...")
                                 .font(.bodyM)
@@ -44,7 +55,11 @@ struct AddJournalView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        dismiss()
+                        if title.isEmpty && content.isEmpty {
+                            dismiss()
+                        } else {
+                            showDiscardAlert = true
+                        }
                     } label: {
                         Image(systemName: "xmark")
                     }
@@ -59,6 +74,15 @@ struct AddJournalView: View {
                     .tint(Color("PrimaryAccent"))
                     .disabled(title.isEmpty)
                 }
+            }
+            .alert("Are you sure you want to discard changes on this journal?", isPresented: $showDiscardAlert) {
+                Button("Discard Changes", role: .destructive) {
+                    dismiss()
+                }
+                Button("Keep Editing", role: .cancel) {}
+            }
+            .onAppear {
+                focusedField = .title
             }
         }
         .preferredColorScheme(.dark)
