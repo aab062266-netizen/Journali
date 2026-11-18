@@ -24,5 +24,13 @@ class JournalViewModel: ObservableObject {
     func deleteJournal(_ journal: Journal) {
         journals.removeAll { $0.id == journal.id }
     }
-}
+    
+        func updateJournal(_ journal: Journal, title: String, content: String) {
+            if let index = journals.firstIndex(where: { $0.id == journal.id }) {
+                journals[index].title = title
+                journals[index].content = content
+            }
+        }
+    }
+
 

@@ -5,32 +5,35 @@
 //  Created by abeer alrashedi on 12/11/2026.
 //
 
+
 import SwiftUI
 
 struct AddJournalView: View {
     @ObservedObject var viewModel: JournalViewModel
+    var journal: Journal? = nil
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var content = ""
     @State private var showDiscardAlert = false
-    private enum Field {
-        case title, content
+    
+    private var hasChanges: Bool {
+        if let journal {
+            return title != journal.title || content != journal.content
+        } else {
+            return !title.isEmpty || !content.isEmpty
+        }
     }
-    @FocusState private var focusedField: Field?
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("CardSurface").ignoresSafeArea()
+                
                 VStack(alignment: .leading, spacing: 8) {
                     TextField("Title", text: $title)
-                        .focused($focusedField, equals: .title)
-                        .submitLabel(.next)
-                        .onSubmit {
-                            focusedField = .content
-                        }
                         .font(.headingM)
                         .foregroundStyle(Color("TextPrimary"))
-                    Text(Date().formatted(date: .numeric, time: .omitted))
+                    Text((journal?.date ?? Date()).formatted(date: .numeric, time: .omitted))
                         .font(.captionS)
                         .foregroundStyle(Color("TextSecondary"))
                     ZStack(alignment: .topLeading) {
@@ -38,7 +41,6 @@ struct AddJournalView: View {
                             .font(.bodyM)
                             .foregroundStyle(Color("TextPrimary"))
                             .scrollContentBackground(.hidden)
-                            .focused($focusedField, equals: .content)
                         if content.isEmpty {
                             Text("Type your Journal...")
                                 .font(.bodyM)
@@ -55,10 +57,10 @@ struct AddJournalView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        if title.isEmpty && content.isEmpty {
-                            dismiss()
-                        } else {
+                        if hasChanges {
                             showDiscardAlert = true
+                        } else {
+                            dismiss()
                         }
                     } label: {
                         Image(systemName: "xmark")
@@ -66,7 +68,11 @@ struct AddJournalView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        viewModel.addJournal(title: title, content: content)
+                        if let journal {
+                            viewModel.updateJournal(journal, title: title, content: content)
+                        } else {
+                            viewModel.addJournal(title: title, content: content)
+                        }
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark")
@@ -82,7 +88,10 @@ struct AddJournalView: View {
                 Button("Keep Editing", role: .cancel) {}
             }
             .onAppear {
-                focusedField = .title
+                if let journal {
+                    title = journal.title
+                    content = journal.content
+                }
             }
         }
         .preferredColorScheme(.dark)
